@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package threat.v1;
+
+option go_package = "github.com/kuadrant/threat-assessment-service/pkg/threat/v1";
+
+service ThreatAssessmentService {
+  rpc AssessRequest(ThreatRequest) returns (ThreatResponse);
+}
+
+message ThreatRequest {
+  string uri = 1;
+  bool is_authenticated = 2;
+  string source_ip = 3;
+}
+
+message ThreatResponse {
+  int32 threat_level = 1;  // 0-10 scale
+  repeated string reasons = 2;  // e.g., ["unauthenticated", "blacklisted_ip"]
+}
