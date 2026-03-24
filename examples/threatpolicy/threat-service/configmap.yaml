@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: threat-service-blacklist
+  namespace: security
+data:
+  ips: |
+    192.0.2.100
+    203.0.113.50
+    198.51.100.25

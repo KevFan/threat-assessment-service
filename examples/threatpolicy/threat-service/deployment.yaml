@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: threat-assessment-service
+  namespace: security
+  labels:
+    app: threat-assessment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: threat-assessment-service
+  template:
+    metadata:
+      labels:
+        app: threat-assessment-service
+    spec:
+      containers:
+        - name: threat-assessment-service
+          image: threat-assessment-service:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: grpc
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: BLACKLIST_FILE
+              value: /etc/threat-service/blacklist/ips
+          volumeMounts:
+            - name: blacklist
+              mountPath: /etc/threat-service/blacklist
+          livenessProbe:
+            grpc:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            grpc:
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+      volumes:
+        - name: blacklist
+          configMap:
+            name: threat-service-blacklist
+            items:
+              - key: ips
+                path: ips
