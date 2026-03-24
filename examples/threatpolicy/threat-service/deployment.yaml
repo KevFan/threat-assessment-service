@@ -17,8 +17,8 @@ spec:
     spec:
       containers:
         - name: threat-assessment-service
-          image: threat-assessment-service:latest
-          imagePullPolicy: IfNotPresent
+          image: quay.io/kevfan/threat-assessment-service:latest
+          imagePullPolicy: Always
           ports:
             - name: grpc
               containerPort: 8080

@@ -1,5 +1,5 @@
 BINARY := threat-service
-IMAGE  ?= threat-assessment-service:latest
+IMAGE  ?= quay.io/kevfan/threat-assessment-service:latest
 
 .PHONY: generate build run test integration-test lint docker-build
 

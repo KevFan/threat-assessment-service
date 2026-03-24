@@ -3,6 +3,10 @@
 A mock gRPC service that evaluates HTTP requests and returns a threat level score (0–10).
 Used by the ThreatPolicy extension via wasm-shim to demonstrate the Extension SDK's dynamic service orchestration capabilities.
 
+[![Build and Push Image](https://github.com/KevFan/threat-assessment-service/actions/workflows/build-push.yaml/badge.svg)](https://github.com/KevFan/threat-assessment-service/actions/workflows/build-push.yaml)
+
+**Image:** `quay.io/kevfan/threat-assessment-service:latest`
+
 ## Proto Interface
 
 ```protobuf
@@ -39,8 +43,23 @@ Environment variables:
 ## Building the Docker Image
 
 ```bash
-docker build -t threat-assessment-service:latest .
+docker build -t quay.io/kevfan/threat-assessment-service:latest .
 ```
+
+Or via Make:
+
+```bash
+make docker-build
+```
+
+## CI and Published Image
+
+Every push to `main` triggers a GitHub Actions workflow that builds a multi-arch image (`amd64` and `arm64`) and pushes it to Quay:
+
+- `quay.io/kevfan/threat-assessment-service:latest`
+- `quay.io/kevfan/threat-assessment-service:<git-sha>`
+
+The SHA-tagged image lets you pin to an exact commit in production.
 
 ## Deploying to Kubernetes
 
@@ -55,10 +74,11 @@ kubectl apply -f examples/threatpolicy/threat-service/service.yaml
 
 ### kind cluster
 
-kind does not pull images from the local Docker daemon, so load the image into the cluster first:
+kind does not pull images from the local Docker daemon. Either let it pull from Quay (default), or load a locally built image first:
 
 ```bash
-kind load docker-image threat-assessment-service:latest
+docker build -t quay.io/kevfan/threat-assessment-service:latest .
+kind load docker-image quay.io/kevfan/threat-assessment-service:latest
 
 kubectl create namespace security
 kubectl apply -f examples/threatpolicy/threat-service/configmap.yaml
